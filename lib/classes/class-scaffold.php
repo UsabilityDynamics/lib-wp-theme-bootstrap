@@ -25,6 +25,24 @@ namespace UsabilityDynamics\WP_Theme {
       public $name = false;
       
       /**
+       * Theme is main or it's child
+       *
+       * @public
+       * @property domain
+       * @var string
+       */
+      public $is_child = false;
+      
+      /**
+       * Parent theme's template name
+       *
+       * @public
+       * @property domain
+       * @var string
+       */
+      public $template = false;
+      
+      /**
        * Textdomain String
        *
        * @public
@@ -50,6 +68,8 @@ namespace UsabilityDynamics\WP_Theme {
       protected function __construct( $args = array() ) {
         //** Setup our theme's data */
         $this->name = isset( $args[ 'name' ] ) ? trim( $args[ 'name' ] ) : false;
+        $this->template = isset( $args[ 'template' ] ) ? trim( $args[ 'template' ] ) : false;
+        $this->is_child = isset( $args[ 'is_child' ] ) ? trim( $args[ 'is_child' ] ) : false;
         $this->domain = isset( $args[ 'domain' ] ) ? trim( $args[ 'domain' ] ) : false;
         $this->args = $args;
       }

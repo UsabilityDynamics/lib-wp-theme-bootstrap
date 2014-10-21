@@ -65,12 +65,11 @@ namespace UsabilityDynamics\WP_Theme {
         //** Maybe define license client */
         $this->define_license_client();
         //** Load text domain */
-        add_action( 'plugins_loaded', array( $this, 'load_textdomain' ), 1 );
+        load_plugin_textdomain( $this->domain, false, dirname( $this->plugin_file ) . '/static/languages/' );
         //** Add additional conditions on 'plugins_loaded' action before we start plugin initialization. */
         add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 10 );
         //** Initialize plugin here. All plugin actions must be added on this step */
-        add_action( 'plugins_loaded', array( $this, 'init' ), 100 );
-        $this->boot();
+        $this->init();
       }
       
       /**
@@ -90,57 +89,6 @@ namespace UsabilityDynamics\WP_Theme {
       public function init() {}
       
       /**
-       * Called in the end of constructor.
-       * Redeclare the method in child class!
-       *
-       * @author peshkov@UD
-       */
-      public function boot() {}
-      
-      /**
-       * Load Text Domain
-       *
-       * @author peshkov@UD
-       */
-      public function load_textdomain() {
-        load_plugin_textdomain( $this->domain, false, dirname( $this->plugin_file ) . '/static/languages/' ); 
-      }
-      
-      /**
-       * Go through additional conditions on 'plugins_loaded' action before we start plugin initialization
-       *
-       * @author peshkov@UD
-       */
-      public function plugins_loaded() {
-        //** Determine if we have TGMA Plugin Activation initialized. */
-        $is_tgma = $this->is_tgma;
-        if( $is_tgma ) {
-          $tgma = TGM_Plugin_Activation::get_instance();
-          //** Maybe get TGMPA notices. */
-          $notices = $tgma->notices( get_class( $this ) );
-          if( !empty( $notices[ 'messages' ] ) && is_array( $notices[ 'messages' ] ) ) {
-            $error_links = false;
-            $message_links = false;
-            foreach( $notices[ 'messages' ] as $m ) {
-              if( $m[ 'type' ] == 'error' ) $error_links = true;
-              elseif( $m[ 'type' ] == 'message' ) $message_links = true;
-              $this->errors->add( $m[ 'value' ], $m[ 'type' ] );
-            }
-            //** Maybe add footer action links to errors and|or notices block. */
-            if( !empty( $notices[ 'links' ] ) && is_array( $notices[ 'links' ] ) ) {
-              foreach( $notices[ 'links' ] as $type => $links ) {
-                foreach( $links as $link ) {
-                  $this->errors->add_action_link( $link, $type );
-                }
-              }
-            }
-          }
-        }
-        //** Maybe define license manager */
-        $this->define_license_manager();
-      }
-      
-      /**
        * Determine if instance already exists and Return Instance
        *
        * Attention: The method MUST be called from plugin core file at first to set correct path to plugin!
@@ -158,44 +106,18 @@ namespace UsabilityDynamics\WP_Theme {
           exit( "Property \$instance must be <b>static</b> for {$class}" );
         }
         if( null === $class::$instance ) {
-
-          $data = wp_get_theme();
-          echo "<pre>"; print_r( $data ); echo "</pre>"; die();
-        
-          $dbt = debug_backtrace();
-          if( !empty( $dbt[0]['file'] ) && file_exists( $dbt[0]['file'] ) ) {
-            $pd = get_file_data( $dbt[0]['file'], array(
-              'name' => 'Plugin Name',
-              'version' => 'Version',
-              'domain' => 'Text Domain',
-            ), 'plugin' );
-            $args = array_merge( (array)$pd, (array)$args, array(
-              'plugin_file' => $dbt[0]['file'],
-              'plugin_url' => plugin_dir_url( $dbt[0]['file'] ),
-            ) );
-            $class::$instance = new $class( $args );
-            //** Register activation hook */
-            register_activation_hook( $dbt[0]['file'], array( $class::$instance, 'activate' ) );
-            //** Register activation hook */
-            register_deactivation_hook( $dbt[0]['file'], array( $class::$instance, 'deactivate' ) );
-          } else {
-            $class::$instance = new $class( $args );
-          }
+          $t = wp_get_theme();
+          $args = array_merge( (array)$args, array(
+            'name' => $t->get( 'Name' ),
+            'version' => $t->get( 'Version' ),
+            'template' => $t->get( 'Template' ),
+            'domain' => $t->get( 'TextDomain' ),
+            'is_child' => is_child_theme(),
+          ) );
+          $class::$instance = new $class( $args );
         }
         return $class::$instance;
       }
-      
-      /**
-       * Plugin Activation
-       * Redeclare the method in child class!
-       */
-      public function activate() {}
-      
-      /**
-       * Plugin Deactivation
-       * Redeclare the method in child class!
-       */
-      public function deactivate() {}
       
       /**
        * @param string $key
@@ -346,21 +268,12 @@ namespace UsabilityDynamics\WP_Theme {
       }
       
       /**
-       * Determine if plugin/theme requires or recommends another plugin(s)
+       * Runs TGM Plugin Activation
        *
        * @author peshkov@UD
        */
       private function plugins_dependencies() {
-        $plugins = $this->get_schema( 'extra.schemas.dependencies.plugins' );
-        if( !empty( $plugins ) && is_array( $plugins ) ) {
-          $tgma = TGM_Plugin_Activation::get_instance();
-          foreach( $plugins as $plugin ) {
-            $plugin[ '_referrer' ] = get_class( $this );
-            $plugin[ '_referrer_name' ] = $this->name;
-            $tgma->register( $plugin );
-          }
-          $this->is_tgma = true;
-        }
+      
       }
       
       /**
