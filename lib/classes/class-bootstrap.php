@@ -6,9 +6,9 @@
  *
  * This file can be used to bootstrap any of theme.
  */
-namespace UsabilityDynamics\WP\Theme {
+namespace UsabilityDynamics\WP_Theme {
 
-  if( !class_exists( 'UsabilityDynamics\WP\Theme\Bootstrap' ) ) {
+  if( !class_exists( 'UsabilityDynamics\WP_Theme\Bootstrap' ) ) {
 
     /**
      * Bootstrap theme in WordPress.
@@ -34,7 +34,7 @@ namespace UsabilityDynamics\WP\Theme {
        *
        * @public
        * @property errors
-       * @var object UsabilityDynamics\WP\Errors object
+       * @var object UsabilityDynamics\WP_Theme\Errors object
        */
       public $errors = false;
       
@@ -157,7 +157,11 @@ namespace UsabilityDynamics\WP\Theme {
         if( !$prop->isStatic() ) {
           exit( "Property \$instance must be <b>static</b> for {$class}" );
         }
-        if( null === $class::$instance ) {    
+        if( null === $class::$instance ) {
+
+          $data = wp_get_theme();
+          echo "<pre>"; print_r( $data ); echo "</pre>"; die();
+        
           $dbt = debug_backtrace();
           if( !empty( $dbt[0]['file'] ) && file_exists( $dbt[0]['file'] ) ) {
             $pd = get_file_data( $dbt[0]['file'], array(

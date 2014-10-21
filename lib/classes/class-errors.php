@@ -2,15 +2,10 @@
 /**
  * Admin Notices Handler
  *
- * @namespace UsabilityDynamics
- *
- * This file can be used to bootstrap any of the UD plugins, it essentially requires that you have
- * a core file which will be called after 'plugins_loaded'. In addition, if the core class has
- * 'activate' and 'deactivate' functions, then those will be called automatically by this class.
  */
-namespace UsabilityDynamics\WP {
+namespace UsabilityDynamics\WP_Theme {
 
-  if( !class_exists( 'UsabilityDynamics\WP\Errors' ) ) {
+  if( !class_exists( 'UsabilityDynamics\WP_Theme\Errors' ) ) {
 
     /**
      * 
