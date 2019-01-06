@@ -1,23 +1,31 @@
 {
-  "name": "usabilitydynamics/lib-wp-theme-bootstrap",
+  "name": "udx/lib-wp-theme-bootstrap",
   "description": "Wordpress Theme's bootstrap library created by UsabilityDynamics",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/UsabilityDynamics/lib-wp-theme-bootstrap"
-  },
-  "homepage": "https://github.com/UsabilityDynamics/lib-wp-theme-bootstrap",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://repository.usabilitydynamics.com"
+    },
+    {
+      "type": "git",
+      "url": "https://github.com/udx/lib-wp-theme-bootstrap"
+    }
+  ],
+  "homepage": "https://github.com/udx/lib-wp-theme-bootstrap",
   "keywords": [
     "wordpress"
   ],
   "minimum-stability": "dev",
   "license": "GPLv2",
-  "author": {
-    "name": "UsabilityDynamics, Inc.",
-    "homepage": "http://usabilitydynamics.com"
-  },
+  "authors": [
+    {
+      "name": "UsabilityDynamics, Inc.",
+      "homepage": "https://www.usabilitydynamics.com"
+    }
+  ],
   "require": {
     "php": ">=5.3",
-    "usabilitydynamics/lib-utility": "master"
+    "udx/lib-utility": "~0.4"
   },
   "autoload": {
     "classmap": [ "lib/classes" ]
